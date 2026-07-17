@@ -1,0 +1,57 @@
+### Build & Maven ###
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackupgit
+dependency-reduced-pom.xml
+
+### IntelliJ IDEA ###
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+
+### Eclipse / STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### VS Code ###
+.vscode/
+
+### OS Generated Files ###
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+### Logs & Databases (Crucial) ###
+*.log
+*.db
+shared-local-instance.db
+
+### Help ###
+HELP.md
+.mvn/wrapper/maven-wrapper.properties
+mvnw
+mvnw.cmd
+.gitattributes
+.mvn/wrapper/maven-wrapper.properties
+mvnw
+mvnw.cmd
+.gitattributes
+.mvn/wrapper/maven-wrapper.properties
+mvnw
+mvnw.cmd
+.gitattributes
