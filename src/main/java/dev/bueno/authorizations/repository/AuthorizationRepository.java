@@ -31,9 +31,6 @@ public class AuthorizationRepository {
                     .globalSecondaryIndices(
                             gsi -> gsi.indexName("user-date-index")
                                     .projection(p -> p.projectionType(ProjectionType.ALL))
-                                    .provisionedThroughput(pt -> pt.readCapacityUnits(5L).writeCapacityUnits(5L)),
-                            gsi -> gsi.indexName("status-date-index")
-                                    .projection(p -> p.projectionType(ProjectionType.ALL))
                                     .provisionedThroughput(pt -> pt.readCapacityUnits(5L).writeCapacityUnits(5L))
                     )
             );
@@ -51,13 +48,11 @@ public class AuthorizationRepository {
 
     public Page<Authorization> search(String userId, String status, String startDate, String endDate, Map<String, AttributeValue> startKey) {
         if (userId != null) {
-            // Busca pelo GSI 1: Pode filtrar por status usando FilterExpression
+            // Estratégia: Filtra grande volume na camada de disco usando a Sort Key (data) do índice,
+            // e aplica o filtro de status na memória (FilterExpression) para economizar custos de infraestrutura.
             return executeQuery("user-date-index", userId, startDate, endDate, status, "status", startKey);
-        } else if (status != null) {
-            // Busca pelo GSI 2: Sem filtro adicional
-            return executeQuery("status-date-index", status, startDate, endDate, null, null, startKey);
         }
-        throw new IllegalArgumentException("Busca inválida: É obrigatório fornecer userId ou status.");
+        throw new IllegalArgumentException("Busca inválida: É obrigatório fornecer userId.");
     }
 
     private Page<Authorization> executeQuery(String indexName, String partitionValue, String startDate, String endDate,
