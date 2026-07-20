@@ -50,15 +50,15 @@ public class AuthorizationRepository {
         if (userId != null) {
             // Estratégia: Filtra grande volume na camada de disco usando a Sort Key (data) do índice,
             // e aplica o filtro de status na memória (FilterExpression) para economizar custos de infraestrutura.
-            return executeQuery("user-date-index", userId, startDate, endDate, status, "status", startKey);
+            return executeQuery(userId, startDate, endDate, status, startKey);
         }
         throw new IllegalArgumentException("Busca inválida: É obrigatório fornecer userId.");
     }
 
-    private Page<Authorization> executeQuery(String indexName, String partitionValue, String startDate, String endDate,
-                                             String filterValue, String filterAttribute, Map<String, AttributeValue> startKey) {
+    private Page<Authorization> executeQuery(String partitionValue, String startDate, String endDate,
+                                             String filterValue, Map<String, AttributeValue> startKey) {
 
-        DynamoDbIndex<Authorization> index = table.index(indexName);
+        DynamoDbIndex<Authorization> index = table.index("user-date-index");
         QueryConditional queryConditional;
 
         // Estratégia de montagem dinâmica da query usando a Sort Key createdAt
@@ -83,11 +83,11 @@ public class AuthorizationRepository {
             requestBuilder.exclusiveStartKey(startKey);
         }
 
-        // Aplica filtros que não são chaves de partição/ordenação (Scan secundário dentro do subset de dados da Query)
-        if (filterValue != null && filterAttribute != null) {
+        // Aplica filtros que não são chaves de partição/ordenação
+        if (filterValue != null && !filterValue.trim().isEmpty()) {
             Expression filterExpression = Expression.builder()
-                    .expression("#attr = :val")
-                    .putExpressionName("#attr", filterAttribute)
+                    .expression("#statusAttr = :val")
+                    .putExpressionName("#statusAttr", "status")
                     .putExpressionValue(":val", AttributeValue.builder().s(filterValue).build())
                     .build();
             requestBuilder.filterExpression(filterExpression);
