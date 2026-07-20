@@ -35,7 +35,6 @@ public class Authorization {
         this.userId = userId;
     }
 
-    @DynamoDbSecondaryPartitionKey(indexNames = {"status-date-index"})
     public String getStatus() {
         return status;
     }
@@ -44,8 +43,8 @@ public class Authorization {
         this.status = status;
     }
 
-    // A data de criação atua como Sort Key (Chave de Ordenação/Busca) para ambos os índices secundários
-    @DynamoDbSecondarySortKey(indexNames = {"user-date-index", "status-date-index"})
+    // A data de criação atua como Sort Key (Chave de Ordenação/Busca)
+    @DynamoDbSecondarySortKey(indexNames = {"user-date-index"})
     public String getCreatedAt() {
         return createdAt;
     }
